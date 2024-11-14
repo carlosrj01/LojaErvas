@@ -1,5 +1,7 @@
 package main;
 
+import java.text.ParseException;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -40,20 +42,27 @@ public class MenuErvas extends Application {
         // Botões com ícones e textos
         Button botaoCarrinho = criarBotao("Verificar Estoque", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/carrinho.png", bigJohnFont);
         Button botaoCadastro = criarBotao("Cadastro de Mercadoria", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/papel.png", bigJohnFont);
-        Button botaoHistorico = criarBotao("Histórico de Saída", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/livro.png", bigJohnFont);
-        Button botaoAlterarPreco = criarBotao("Alterar Preço", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/preco.png", bigJohnFont);
+        Button botaoHistoricoS = criarBotao("Histórico de Saída", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/livro.png", bigJohnFont);
         Button botaoAtualizarEstoque = criarBotao("Adicionar Mercadoria", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/estoque.png", bigJohnFont);
         Button botaoRemoverEstoque = criarBotao("Remover Mercadoria", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/remover.png", bigJohnFont);
+        Button botaoHistoricoE = criarBotao("Histórico de Entrada", "file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/preco.png", bigJohnFont);
 
         // Ações dos botões para abrir novas janelas
         botaoCarrinho.setOnAction(e -> abrirCarrinhoDeCompras());
         botaoCadastro.setOnAction(e -> abrirCadastroProduto());
-        botaoHistorico.setOnAction(e -> abrirHistoricoDeCompras());
-        botaoAlterarPreco.setOnAction(e -> abrirModificarPrecoProduto()); 
+        botaoHistoricoS.setOnAction(e -> abrirHistoricoSaida());
         botaoAtualizarEstoque.setOnAction(e -> abrirAtualizarEstoque());
         botaoRemoverEstoque.setOnAction(e -> abrirRemoverEstoque());
+        botaoHistoricoE.setOnAction(e -> {
+			try {
+				abrirHistoricoEntrada();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 
-        painelBotoes.getChildren().addAll(botaoAtualizarEstoque, botaoRemoverEstoque, botaoCarrinho, botaoCadastro, botaoHistorico, botaoAlterarPreco);
+        painelBotoes.getChildren().addAll(botaoAtualizarEstoque, botaoRemoverEstoque, botaoCarrinho, botaoCadastro, botaoHistoricoS, botaoHistoricoE);
 
         // Imagem e título ao lado esquerdo
         ImageView imagemLogo = new ImageView(new Image("file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/portervas.png"));
@@ -108,21 +117,7 @@ public class MenuErvas extends Application {
         return botao;
     }
 
-    private void abrirNovaJanela(String titulo) {
-        Stage novaJanela = new Stage();
-        novaJanela.setTitle(titulo);
-        novaJanela.setOnCloseRequest((WindowEvent e) -> janelaPrincipal.show());
-
-        janelaPrincipal.hide();
-
-        VBox conteudo = new VBox();
-        conteudo.setAlignment(Pos.CENTER);
-        conteudo.getChildren().add(new Button("Aqui estará o conteúdo para " + titulo));
-        Scene scene = new Scene(conteudo, 300, 200);
-
-        novaJanela.setScene(scene);
-        novaJanela.show();
-    }
+ 
 
     private void abrirCadastroProduto() {
         Stage cadastroStage = new Stage();
@@ -142,21 +137,12 @@ public class MenuErvas extends Application {
         janelaPrincipal.hide();
     }
 
-    private void abrirHistoricoDeCompras() {
+    private void abrirHistoricoSaida() {
         Stage historicoStage = new Stage();
         HistoricoSaida historicoDeCompras = new HistoricoSaida(janelaPrincipal);
         historicoDeCompras.start(historicoStage);
 
         historicoStage.setOnCloseRequest(e -> janelaPrincipal.show());
-        janelaPrincipal.hide();
-    }
-
-    private void abrirModificarPrecoProduto() {
-        Stage modificarPrecoStage = new Stage();
-        ModificarPrecoProduto modificarPrecoProduto = new ModificarPrecoProduto(janelaPrincipal);
-        modificarPrecoProduto.start(modificarPrecoStage);
-
-        modificarPrecoStage.setOnCloseRequest(e -> janelaPrincipal.show());
         janelaPrincipal.hide();
     }
     
@@ -173,5 +159,14 @@ public class MenuErvas extends Application {
         removerEstoque.start(removerEstoqueStage);
         removerEstoqueStage.setOnCloseRequest(e -> janelaPrincipal.show());
         janelaPrincipal.hide();
+    }
+    
+    private void abrirHistoricoEntrada() throws ParseException {
+    	Stage adicionarEstoqueStage = new Stage();
+    	HistoricoEntrada historicoEntrada = new HistoricoEntrada(janelaPrincipal);
+    	historicoEntrada.start(adicionarEstoqueStage);
+    	adicionarEstoqueStage.setOnCloseRequest(e -> janelaPrincipal.show());
+    	janelaPrincipal.hide();
+    	
     }
 }

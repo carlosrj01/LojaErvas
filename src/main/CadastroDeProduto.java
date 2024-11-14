@@ -6,6 +6,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -28,8 +30,18 @@ public class CadastroDeProduto extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Cadastro de Produto");
 
+        // Fonte e Estilos
+        Font fontePadrao = Font.font("Consolas", 18);
+        String estiloBotao = "-fx-background-color: #3A5A40;";
+        String estiloBotaoHover = "-fx-background-color: #587A58;";
+        
         // Botão "Voltar"
         Button botaoVoltar = new Button("Voltar");
+        botaoVoltar.setFont(fontePadrao);
+        botaoVoltar.setStyle(estiloBotao);
+        botaoVoltar.setTextFill(Color.WHITE);
+        botaoVoltar.setOnMouseEntered(e -> botaoVoltar.setStyle(estiloBotaoHover));
+        botaoVoltar.setOnMouseExited(e -> botaoVoltar.setStyle(estiloBotao));
         botaoVoltar.setOnAction(e -> {
             primaryStage.close();
             menuAnterior.show();
@@ -41,15 +53,39 @@ public class CadastroDeProduto extends Application {
 
         // Campos de cadastro
         Label labelID = new Label("ID do Produto:");
-        campoID = new TextField();
-        Label labelNome = new Label("Nome do Produto:");
-        campoNome = new TextField();
-        Label labelPreco = new Label("Preço:");
-        campoPreco = new TextField();
-        Label labelQuantidade = new Label("Quantidade:");
-        campoQuantidade = new TextField();
-        Button botaoCadastrar = new Button("Cadastrar");
+        labelID.setFont(fontePadrao);
+        labelID.setTextFill(Color.DARKGREEN);
 
+        campoID = new TextField();
+        campoID.setFont(fontePadrao);
+        campoID.setStyle("-fx-background-color: darkgray; -fx-text-fill: white;");
+
+        Label labelNome = new Label("Nome do Produto:");
+        labelNome.setFont(fontePadrao);
+        labelNome.setTextFill(Color.DARKGREEN);
+
+        campoNome = new TextField();
+        campoNome.setFont(fontePadrao);
+        campoNome.setStyle("-fx-background-color: darkgray; -fx-text-fill: white;");
+
+        campoPreco = new TextField();
+        campoPreco.setFont(fontePadrao);
+        campoPreco.setStyle("-fx-background-color: darkgray; -fx-text-fill: white;");
+
+        Label labelQuantidade = new Label("Quantidade:");
+        labelQuantidade.setFont(fontePadrao);
+        labelQuantidade.setTextFill(Color.DARKGREEN);
+
+        campoQuantidade = new TextField();
+        campoQuantidade.setFont(fontePadrao);
+        campoQuantidade.setStyle("-fx-background-color: darkgray; -fx-text-fill: white;");
+
+        Button botaoCadastrar = new Button("Cadastrar");
+        botaoCadastrar.setFont(fontePadrao);
+        botaoCadastrar.setStyle(estiloBotao);
+        botaoCadastrar.setTextFill(Color.WHITE);
+        botaoCadastrar.setOnMouseEntered(e -> botaoCadastrar.setStyle(estiloBotaoHover));
+        botaoCadastrar.setOnMouseExited(e -> botaoCadastrar.setStyle(estiloBotao));
         botaoCadastrar.setOnAction(e -> cadastrarProduto());
 
         // Painel com GridPane
@@ -61,16 +97,16 @@ public class CadastroDeProduto extends Application {
         painelCampos.add(campoID, 1, 0);
         painelCampos.add(labelNome, 0, 1);
         painelCampos.add(campoNome, 1, 1);
-        painelCampos.add(labelPreco, 0, 2);
-        painelCampos.add(campoPreco, 1, 2);
-        painelCampos.add(labelQuantidade, 0, 3);
-        painelCampos.add(campoQuantidade, 1, 3);
-        painelCampos.add(botaoCadastrar, 1, 4);
+        painelCampos.add(labelQuantidade, 0, 2);
+        painelCampos.add(campoQuantidade, 1, 2);
+        painelCampos.add(botaoCadastrar, 1, 3);
+        
 
         VBox root = new VBox(10, painelSuperior, painelCampos);
         root.setPadding(new Insets(10));
+        root.setStyle("-fx-background-color: #ECEBD7;");
 
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, 360, 320);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -78,12 +114,10 @@ public class CadastroDeProduto extends Application {
     private void cadastrarProduto() {
         int id;
         String nome = campoNome.getText();
-        double preco;
         int quantidade;
 
         try {
             id = Integer.parseInt(campoID.getText());
-            preco = Double.parseDouble(campoPreco.getText());
             quantidade = Integer.parseInt(campoQuantidade.getText());
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "ID, preço ou quantidade inválidos.");
@@ -91,13 +125,12 @@ public class CadastroDeProduto extends Application {
         }
 
         Connection conexao = ConexaoBancoDados.conectar();
-        String sql = "INSERT INTO produtos (id, nome, valor, qtd) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO produtos (id, nome, qtd) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.setString(2, nome);
-            stmt.setDouble(3, preco);
-            stmt.setInt(4, quantidade);
+            stmt.setInt(3, quantidade);
             stmt.executeUpdate();
             showAlert(Alert.AlertType.INFORMATION, "Produto cadastrado com sucesso!");
         } catch (SQLException e) {

@@ -63,18 +63,17 @@ public class VerificaEstoque extends Application {
     // Método para carregar produtos do estoque e exibir na lista
     private void carregarProdutosEstoque() {
         Connection conexao = ConexaoBancoDados.conectar();
-        String sql = "SELECT ID, nome, valor, qtd FROM produtos";
+        String sql = "SELECT ID, nome, qtd FROM produtos";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 String idProduto = rs.getString("ID");
                 String nomeProduto = rs.getString("nome");
-                double valorProduto = rs.getDouble("valor");
                 int quantidade = rs.getInt("qtd");
 
                 // Formatação da linha de exibição
-                String item = String.format("ID: %s | Nome: %s | Valor: R$ %.2f | Quantidade: %d", idProduto, nomeProduto, valorProduto, quantidade);
+                String item = String.format("ID: %s | Nome: %s | Quantidade: %d", idProduto, nomeProduto, quantidade);
                 listaProdutosView.getItems().add(item);
             }
         } catch (SQLException e) {

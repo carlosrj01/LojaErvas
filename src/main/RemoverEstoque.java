@@ -55,7 +55,7 @@ public class RemoverEstoque extends Application {
         // Campo de ID para preencher automaticamente nome e valor ao perder o foco
         campoIdProduto.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
-                preencherProdutoPorId(campoIdProduto.getText(), campoNomeProduto, campoValor);
+                preencherProdutoPorId(campoIdProduto.getText(), campoNomeProduto);
             }
         });
 
@@ -70,10 +70,8 @@ public class RemoverEstoque extends Application {
         gridCampos.add(campoIdProduto, 1, 0);
         gridCampos.add(criarLabel("Nome do Produto:"), 0, 1);
         gridCampos.add(campoNomeProduto, 1, 1);
-        gridCampos.add(criarLabel("Valor:"), 0, 2);
-        gridCampos.add(campoValor, 1, 2);
-        gridCampos.add(criarLabel("Quantidade:"), 0, 3);
-        gridCampos.add(campoQuantidade, 1, 3);
+        gridCampos.add(criarLabel("Quantidade:"), 0, 2);
+        gridCampos.add(campoQuantidade, 1, 2);
 
         // Lista de produtos
         listaProdutosView = new ListView<>();
@@ -84,17 +82,14 @@ public class RemoverEstoque extends Application {
         botaoAdicionar.setOnAction(e -> {
             String idProduto = campoIdProduto.getText();
             String nomeProduto = campoNomeProduto.getText();
-            String valorTexto = campoValor.getText();
             String quantidade = campoQuantidade.getText();
 
-            if (idProduto.isEmpty() || nomeProduto.isEmpty() || valorTexto.isEmpty() || quantidade.isEmpty()) {
+            if (idProduto.isEmpty() || nomeProduto.isEmpty() || quantidade.isEmpty()) {
                 exibirMensagem("Por favor, preencha todos os campos.", Alert.AlertType.WARNING);
                 return;
             }
 
             try {
-                String valorTextoComPonto = valorTexto.replace(",", ".");
-                double valorProduto = Double.parseDouble(valorTextoComPonto.trim());
                 int qtdProduto = Integer.parseInt(quantidade.trim());
 
                 int qtdEmEstoque = verificarQuantidadeEmEstoque(idProduto);
@@ -104,12 +99,10 @@ public class RemoverEstoque extends Application {
                 }
 
                 atualizarEstoque(idProduto, qtdProduto);
-
-                double subtotal = valorProduto * qtdProduto;
                 DecimalFormat df = new DecimalFormat("#,##0.00");
-                String item = "ID: " + idProduto + " | Nome: " + nomeProduto + " | Quantidade: " + qtdProduto + " | Valor: R$ " + df.format(valorProduto) + " | Subtotal: R$ " + df.format(subtotal);
+                String item = ("ID: " + idProduto + " | Nome: " + nomeProduto + " | Quantidade: " + qtdProduto);
 
-                produtos.add(new String[]{idProduto, nomeProduto, String.valueOf(valorProduto), String.valueOf(qtdProduto)});
+                produtos.add(new String[]{idProduto, nomeProduto, String.valueOf(qtdProduto)});
                 listaProdutosView.getItems().add(item);
 
                 campoIdProduto.clear();
@@ -126,18 +119,16 @@ public class RemoverEstoque extends Application {
         // Botão "Finalizar Compra"
         Button botaoFinalizar = criarBotao("Finalizar Compra");
         botaoFinalizar.setOnAction(e -> {
-            double total = 0;
             for (String[] produto : produtos) {
             	String idProduto = produto[0];
-                double valorProduto = Double.parseDouble(produto[2]);
-                int qtdProduto = Integer.parseInt(produto[3]);
-                total += valorProduto * qtdProduto;
+                int qtdProduto = Integer.parseInt(produto[2]);
+                
                 
              // Adiciona o produto no histórico de compras
-                HistoricoSaida.adicionarCompra(idProduto, valorProduto, qtdProduto);
+                HistoricoSaida.adicionarCompra(idProduto, qtdProduto);
                 
             }
-            exibirMensagem("Total de Estoque retirado em valor: R$  " + total, Alert.AlertType.INFORMATION);
+            exibirMensagem("Estoque retirado", Alert.AlertType.INFORMATION);
         });
 
         // Layout dos botões
@@ -150,6 +141,7 @@ public class RemoverEstoque extends Application {
         primaryStage.setScene(cena);
         primaryStage.show();
     }
+    
 
     // Criação de rótulos com estilo padrão
     private Label criarLabel(String texto) {
@@ -171,20 +163,18 @@ public class RemoverEstoque extends Application {
     }
 
     // Método para preencher o nome e o valor do produto com base no ID
-    private void preencherProdutoPorId(String idProduto, TextField campoNomeProduto, TextField campoValor) {
+    private void preencherProdutoPorId(String idProduto, TextField campoNomeProduto) {
         Connection conexao = ConexaoBancoDados.conectar();
-        String sql = "SELECT nome, valor FROM produtos WHERE ID = ?";
+        String sql = "SELECT nome FROM produtos WHERE ID = ?";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, idProduto);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 campoNomeProduto.setText(rs.getString("nome"));
-                campoValor.setText(String.format("%.2f", rs.getDouble("valor")));
             } else {
                 exibirMensagem("Produto não encontrado.", Alert.AlertType.ERROR);
                 campoNomeProduto.clear();
-                campoValor.clear();
             }
         } catch (SQLException e) {
             exibirMensagem("Erro ao buscar produto: " + e.getMessage(), Alert.AlertType.ERROR);

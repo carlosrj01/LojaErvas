@@ -92,6 +92,7 @@ public class AdicionaEstoque extends Application {
                     exibirAlerta(AlertType.INFORMATION, "Sucesso", "Quantidade adicionada com sucesso!");
                     campoIdProduto.clear();
                     campoQuantidadeAdicionar.clear();
+                    HistoricoEntrada.adicionarEntrada(idProduto, quantidade);
                 } else {
                     exibirAlerta(AlertType.ERROR, "Erro", "Produto não encontrado no banco de dados.");
                 }
@@ -155,4 +156,9 @@ public class AdicionaEstoque extends Application {
         alerta.setContentText(mensagem);
         alerta.showAndWait();
     }
+    
+    
+    
+    
+    
 }
