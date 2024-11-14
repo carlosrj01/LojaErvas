@@ -12,6 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -30,18 +32,28 @@ public class AdicionaEstoque extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Atualizar Estoque");
+        primaryStage.setTitle("Adicionar Mercadoria");
         primaryStage.setResizable(false);
 
         BorderPane painelFundo = new BorderPane();
-        painelFundo.setStyle("-fx-background-color: black;");
-
+        painelFundo.setStyle("-fx-background-color: ECEBD7;");
+        
+        // Fonte e Estilos
+        Font fontePadrao = Font.font("Consolas", 18);
+        String estiloBotao = "-fx-background-color: #3A5A40;";
+        String estiloBotaoHover = "-fx-background-color: #587A58;";
+      
+        
         // Painel do botão "Voltar" no topo
         HBox painelTopo = new HBox();
         painelTopo.setAlignment(Pos.CENTER_LEFT);
         painelTopo.setPadding(new Insets(10));
         Button botaoVoltar = new Button("Voltar");
-        botaoVoltar.setStyle("-fx-background-color: #3296FF; -fx-text-fill: white; -fx-font-size: 16px;");
+        botaoVoltar.setStyle(estiloBotao);
+        botaoVoltar.setFont(fontePadrao);
+        botaoVoltar.setTextFill(Color.WHITE);
+        botaoVoltar.setOnMouseEntered(e -> botaoVoltar.setStyle(estiloBotaoHover));
+        botaoVoltar.setOnMouseExited(e -> botaoVoltar.setStyle(estiloBotao));
         botaoVoltar.setOnAction(e -> {
             primaryStage.close(); // Fecha a janela atual
             menuAnterior.show(); // Mostra o MenuErvas (menu principal)
@@ -57,12 +69,14 @@ public class AdicionaEstoque extends Application {
         painelCampos.setAlignment(Pos.CENTER);
 
         Label labelIdProduto = new Label("ID do Produto:");
-        labelIdProduto.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+        labelIdProduto.setFont(fontePadrao);
+        labelIdProduto.setTextFill(Color.DARKGREEN);
         TextField campoIdProduto = new TextField();
         campoIdProduto.setStyle("-fx-background-color: darkgray; -fx-text-fill: white; -fx-font-size: 16px;");
 
         Label labelQuantidadeAdicionar = new Label("Quantidade a Adicionar:");
-        labelQuantidadeAdicionar.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+        labelQuantidadeAdicionar.setTextFill(Color.DARKGREEN);
+        labelQuantidadeAdicionar.setFont(fontePadrao);
         TextField campoQuantidadeAdicionar = new TextField();
         campoQuantidadeAdicionar.setStyle("-fx-background-color: darkgray; -fx-text-fill: white; -fx-font-size: 16px;");
 
@@ -74,7 +88,11 @@ public class AdicionaEstoque extends Application {
 
         // Botão "Adicionar Quantidade" para atualizar o estoque
         Button botaoAdicionarQuantidade = new Button("Adicionar Quantidade");
-        botaoAdicionarQuantidade.setStyle("-fx-background-color: #3296FF; -fx-text-fill: white; -fx-font-size: 16px");
+        botaoAdicionarQuantidade.setStyle(estiloBotao);
+        botaoAdicionarQuantidade.setFont(fontePadrao);
+        botaoAdicionarQuantidade.setTextFill(Color.WHITE);
+        botaoAdicionarQuantidade.setOnMouseEntered(e -> botaoAdicionarQuantidade.setStyle(estiloBotaoHover));
+        botaoAdicionarQuantidade.setOnMouseExited(e -> botaoAdicionarQuantidade.setStyle(estiloBotao));
         botaoAdicionarQuantidade.setOnAction(e -> {
             String idProduto = campoIdProduto.getText();
             String quantidadeAdicionar = campoQuantidadeAdicionar.getText();
