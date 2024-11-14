@@ -23,6 +23,7 @@ public class AdicionaEstoque extends Application {
 
     private Stage menuAnterior;
 
+    // Construtor que recebe o Stage do menu anterior
     public AdicionaEstoque(Stage menuAnterior) {
         this.menuAnterior = menuAnterior;
     }
@@ -42,8 +43,8 @@ public class AdicionaEstoque extends Application {
         Button botaoVoltar = new Button("Voltar");
         botaoVoltar.setStyle("-fx-background-color: #3296FF; -fx-text-fill: white; -fx-font-size: 16px;");
         botaoVoltar.setOnAction(e -> {
-            primaryStage.close();
-            menuAnterior.show();
+            primaryStage.close(); // Fecha a janela atual
+            menuAnterior.show(); // Mostra o MenuErvas (menu principal)
         });
         painelTopo.getChildren().add(botaoVoltar);
         painelFundo.setTop(painelTopo);

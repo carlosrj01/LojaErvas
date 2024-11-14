@@ -126,7 +126,7 @@ public class MenuErvas extends Application {
 
     private void abrirCadastroProduto() {
         Stage cadastroStage = new Stage();
-        CadastroDeProduto cadastroDeProduto = new CadastroDeProduto(cadastroStage);
+        CadastroDeProduto cadastroDeProduto = new CadastroDeProduto(janelaPrincipal);
         cadastroDeProduto.start(cadastroStage);
 
         cadastroStage.setOnCloseRequest(e -> janelaPrincipal.show());
@@ -135,7 +135,7 @@ public class MenuErvas extends Application {
 
     private void abrirCarrinhoDeCompras() {
         Stage carrinhoStage = new Stage();
-        VerificaEstoque carrinhoDeCompras = new VerificaEstoque(carrinhoStage);
+        VerificaEstoque carrinhoDeCompras = new VerificaEstoque(janelaPrincipal);
         carrinhoDeCompras.start(carrinhoStage);
 
         carrinhoStage.setOnCloseRequest(e -> janelaPrincipal.show());
@@ -144,7 +144,7 @@ public class MenuErvas extends Application {
 
     private void abrirHistoricoDeCompras() {
         Stage historicoStage = new Stage();
-        HistoricoSaida historicoDeCompras = new HistoricoSaida(historicoStage);
+        HistoricoSaida historicoDeCompras = new HistoricoSaida(janelaPrincipal);
         historicoDeCompras.start(historicoStage);
 
         historicoStage.setOnCloseRequest(e -> janelaPrincipal.show());
@@ -153,7 +153,7 @@ public class MenuErvas extends Application {
 
     private void abrirModificarPrecoProduto() {
         Stage modificarPrecoStage = new Stage();
-        ModificarPrecoProduto modificarPrecoProduto = new ModificarPrecoProduto(modificarPrecoStage);
+        ModificarPrecoProduto modificarPrecoProduto = new ModificarPrecoProduto(janelaPrincipal);
         modificarPrecoProduto.start(modificarPrecoStage);
 
         modificarPrecoStage.setOnCloseRequest(e -> janelaPrincipal.show());
@@ -162,14 +162,14 @@ public class MenuErvas extends Application {
     
     private void abrirAtualizarEstoque() {
         Stage atualizarEstoqueStage = new Stage();
-        AdicionaEstoque atualizarEstoque = new AdicionaEstoque(atualizarEstoqueStage);
+        AdicionaEstoque atualizarEstoque = new AdicionaEstoque(janelaPrincipal);
         atualizarEstoque.start(atualizarEstoqueStage);
         janelaPrincipal.hide();
     }
     
     private void abrirRemoverEstoque() {
         Stage removerEstoqueStage = new Stage();
-        RemoverEstoque removerEstoque = new RemoverEstoque(removerEstoqueStage);
+        RemoverEstoque removerEstoque = new RemoverEstoque(janelaPrincipal);
         removerEstoque.start(removerEstoqueStage);
         removerEstoqueStage.setOnCloseRequest(e -> janelaPrincipal.show());
         janelaPrincipal.hide();
