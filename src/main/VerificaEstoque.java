@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -26,6 +25,11 @@ public class VerificaEstoque extends Application {
     public VerificaEstoque(Stage menuAnterior) {
         this.menuAnterior = menuAnterior;
     }
+    
+    // Fonte e Estilos
+    Font fontePadrao = Font.font("Consolas", 18);
+    String estiloBotao = "-fx-background-color: #3A5A40;";
+    String estiloBotaoHover = "-fx-background-color: #587A58;";
 
     @Override
     public void start(Stage primaryStage) {
@@ -36,7 +40,7 @@ public class VerificaEstoque extends Application {
         VBox layoutPrincipal = new VBox(10);
         layoutPrincipal.setPadding(new Insets(10));
         layoutPrincipal.setAlignment(Pos.TOP_CENTER);
-        layoutPrincipal.setStyle("-fx-background-color: black;");
+        layoutPrincipal.setStyle("-fx-background-color: #ECEBD7;");
 
         // Botão "Voltar"
         Button botaoVoltar = criarBotao("Voltar");
@@ -86,11 +90,11 @@ public class VerificaEstoque extends Application {
     // Criação de botões com estilo padrão
     private Button criarBotao(String texto) {
         Button botao = new Button(texto);
-        botao.setFont(Font.font("Helvetica", 18));
+        botao.setFont(fontePadrao);
         botao.setTextFill(Color.WHITE);
-        botao.setStyle("-fx-background-color: #3296FF;");
-        botao.setOnMouseEntered(e -> botao.setStyle("-fx-background-color: #46b4ff;"));
-        botao.setOnMouseExited(e -> botao.setStyle("-fx-background-color: #3296FF;"));
+        botao.setStyle(estiloBotao);
+        botao.setOnMouseEntered(e -> botao.setStyle(estiloBotaoHover));
+        botao.setOnMouseExited(e -> botao.setStyle(estiloBotao));
         return botao;
     }
 
