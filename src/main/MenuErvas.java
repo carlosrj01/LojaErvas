@@ -49,7 +49,15 @@ public class MenuErvas extends Application {
         // Ações dos botões para abrir novas janelas
         botaoCarrinho.setOnAction(e -> abrirCarrinhoDeCompras());
         botaoCadastro.setOnAction(e -> abrirCadastroProduto());
-        botaoHistoricoS.setOnAction(e -> abrirHistoricoSaida());
+        botaoHistoricoS.setOnAction(e -> {
+			try {
+				abrirHistoricoSaida();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+        
         botaoAtualizarEstoque.setOnAction(e -> abrirAtualizarEstoque());
         botaoRemoverEstoque.setOnAction(e -> abrirRemoverEstoque());
         botaoHistoricoE.setOnAction(e -> {
@@ -136,7 +144,7 @@ public class MenuErvas extends Application {
         janelaPrincipal.hide();
     }
 
-    private void abrirHistoricoSaida() {
+    private void abrirHistoricoSaida() throws ParseException {
         Stage historicoStage = new Stage();
         HistoricoSaida historicoDeCompras = new HistoricoSaida(janelaPrincipal);
         historicoDeCompras.start(historicoStage);

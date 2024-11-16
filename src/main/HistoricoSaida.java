@@ -1,6 +1,7 @@
 package main;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -8,11 +9,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,10 +37,16 @@ public class HistoricoSaida {
     );
 
     // Método start para iniciar a janela de Histórico de Compras
-    public void start(Stage janelaHistorico) {
+    public void start(Stage janelaHistorico) throws ParseException {
         janelaHistorico.setTitle("Histórico de Compras");
+        
+        // Fonte e Estilos
+        Font fontePadrao = Font.font("Consolas", 18);
+        String estiloBotao = "-fx-background-color: #3A5A40;";
+        String estiloBotaoHover = "-fx-background-color: #587A58;";
 
         BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: ECEBD7;");
         root.setPadding(new Insets(10));
 
         // Configurar a tabela de histórico de compras
@@ -49,6 +59,11 @@ public class HistoricoSaida {
 
         // Botão Voltar
         Button botaoVoltar = new Button("Voltar");
+        botaoVoltar.setStyle(estiloBotao);
+        botaoVoltar.setFont(fontePadrao);
+        botaoVoltar.setTextFill(Color.WHITE);
+        botaoVoltar.setOnMouseEntered(e -> botaoVoltar.setStyle(estiloBotaoHover));
+        botaoVoltar.setOnMouseExited(e -> botaoVoltar.setStyle(estiloBotao));
         botaoVoltar.setOnAction(e -> {
             janelaHistorico.close();
             menuAnterior.show();
@@ -59,8 +74,11 @@ public class HistoricoSaida {
         Button botaoGerarCSV = new Button();
         ImageView iconeCSV = new ImageView(new Image("file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/csv.png"));
         iconeCSV.setFitWidth(20);
-        iconeCSV.setFitHeight(20);
+        iconeCSV.setFitHeight(27);
         botaoGerarCSV.setGraphic(iconeCSV);
+        botaoGerarCSV.setStyle(estiloBotao);
+        botaoGerarCSV.setOnMouseEntered(e -> botaoGerarCSV.setStyle(estiloBotaoHover));
+        botaoGerarCSV.setOnMouseExited(e -> botaoGerarCSV.setStyle(estiloBotao));
         botaoGerarCSV.setOnAction(e -> gerarCSV());
 
         painelTopo.getChildren().addAll(botaoVoltar, botaoGerarCSV);
@@ -78,21 +96,25 @@ public class HistoricoSaida {
     private void configurarTabelaHistorico() {
         TableColumn<Compra, String> colunaId = new TableColumn<>("ID Produto");
         colunaId.setCellValueFactory(new PropertyValueFactory<>("idProduto"));
+        colunaId.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         TableColumn<Compra, String> colunaNome = new TableColumn<>("Nome Produto");
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+        colunaNome.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         TableColumn<Compra, Integer> colunaQuantidade = new TableColumn<>("Quantidade");
         colunaQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        colunaQuantidade.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         TableColumn<Compra, String> colunaDataHora = new TableColumn<>("Data e Hora");
         colunaDataHora.setCellValueFactory(new PropertyValueFactory<>("dataHora"));
-
+        colunaDataHora.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
+        
         tabelaHistorico.getColumns().addAll(colunaId, colunaNome, colunaQuantidade, colunaDataHora);
     }
 
     // Método para carregar o histórico de vendas do banco de dados e adicionar à tabela
-    private void carregarHistoricoDoBanco() {
+    private void carregarHistoricoDoBanco() throws ParseException {
         tabelaHistorico.getItems().clear();
 
         Connection conexao = ConexaoBancoDados.conectar();
@@ -101,15 +123,20 @@ public class HistoricoSaida {
             FROM vendas
             INNER JOIN produtos ON vendas.idProduto = produtos.ID
         """;
+        
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
+            	String dataRetirada = rs.getString("dataRetirada");
+            	Date data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dataRetirada);
+                String dataFormatada = formatoData.format(data);
                 Compra compra = new Compra(
                         rs.getString("idProduto"),
                         rs.getString("nome"),
                         rs.getInt("qtdRetirado"),
-                        rs.getString("dataRetirada")
+                        dataFormatada
                 );
                 tabelaHistorico.getItems().add(compra);
             }
