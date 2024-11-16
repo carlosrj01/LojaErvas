@@ -6,6 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -35,7 +37,13 @@ public class HistoricoEntrada {
     public void start(Stage janelaHistorico) throws ParseException {
         janelaHistorico.setTitle("Histórico de Entradas");
 
+     // Fonte e Estilos
+        Font fontePadrao = Font.font("Consolas", 18);
+        String estiloBotao = "-fx-background-color: #3A5A40;";
+        String estiloBotaoHover = "-fx-background-color: #587A58;";
+        
         BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: ECEBD7;");
         root.setPadding(new Insets(10));
 
         // Configurar a tabela de histórico de entradas
@@ -48,6 +56,11 @@ public class HistoricoEntrada {
 
         // Botão Voltar
         Button botaoVoltar = new Button("Voltar");
+        botaoVoltar.setStyle(estiloBotao);
+        botaoVoltar.setFont(fontePadrao);
+        botaoVoltar.setTextFill(Color.WHITE);
+        botaoVoltar.setOnMouseEntered(e -> botaoVoltar.setStyle(estiloBotaoHover));
+        botaoVoltar.setOnMouseExited(e -> botaoVoltar.setStyle(estiloBotao));
         botaoVoltar.setOnAction(e -> {
             janelaHistorico.close();
             menuAnterior.show();
@@ -68,15 +81,19 @@ public class HistoricoEntrada {
     private void configurarTabelaHistorico() {
         TableColumn<Entrada, String> colunaId = new TableColumn<>("ID Produto");
         colunaId.setCellValueFactory(new PropertyValueFactory<>("idProduto"));
+        colunaId.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         TableColumn<Entrada, String> colunaNome = new TableColumn<>("Nome Produto");
         colunaNome.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
+        colunaNome.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         TableColumn<Entrada, Integer> colunaQuantidade = new TableColumn<>("Quantidade");
         colunaQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        colunaQuantidade.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         TableColumn<Entrada, String> colunaDataHora = new TableColumn<>("Data e Hora");
         colunaDataHora.setCellValueFactory(new PropertyValueFactory<>("dataHora"));
+        colunaDataHora.setStyle("-fx-font-family: 'Consolas'; -fx-font-size: 16px");
 
         tabelaHistorico.getColumns().addAll(colunaId, colunaNome, colunaQuantidade, colunaDataHora);
     }
