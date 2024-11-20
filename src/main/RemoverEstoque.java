@@ -25,6 +25,12 @@ public class RemoverEstoque extends Application {
         produtos = new ArrayList<>();
     }
 
+    // Fonte e Estilos
+    Font fontePadrao = Font.font("Consolas", 18);
+    String estiloBotao = "-fx-background-color: #3A5A40;";
+    String estiloBotaoHover = "-fx-background-color: #587A58;";
+    
+    
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Carrinho de Compras");
@@ -34,7 +40,7 @@ public class RemoverEstoque extends Application {
         VBox layoutPrincipal = new VBox(10);
         layoutPrincipal.setPadding(new Insets(10));
         layoutPrincipal.setAlignment(Pos.TOP_CENTER);
-        layoutPrincipal.setStyle("-fx-background-color: black;");
+        layoutPrincipal.setStyle("-fx-background-color: #ECEBD7;");
 
         // Botão "Voltar"
         Button botaoVoltar = criarBotao("Voltar");
@@ -42,7 +48,7 @@ public class RemoverEstoque extends Application {
             primaryStage.close();
             menuAnterior.show();
         });
-
+        
         // Campos de entrada
         TextField campoIdProduto = new TextField();
         TextField campoNomeProduto = new TextField();
@@ -146,19 +152,20 @@ public class RemoverEstoque extends Application {
     // Criação de rótulos com estilo padrão
     private Label criarLabel(String texto) {
         Label label = new Label(texto);
-        label.setFont(Font.font("Helvetica", 18));
-        label.setTextFill(Color.WHITE);
+        label.setFont(fontePadrao);
+        label.setTextFill(Color.DARKGREEN);
         return label;
+        
     }
 
     // Criação de botões com estilo padrão
     private Button criarBotao(String texto) {
         Button botao = new Button(texto);
-        botao.setFont(Font.font("Helvetica", 18));
+        botao.setFont(fontePadrao);
         botao.setTextFill(Color.WHITE);
-        botao.setStyle("-fx-background-color: #3296FF;");
-        botao.setOnMouseEntered(e -> botao.setStyle("-fx-background-color: #46b4ff;"));
-        botao.setOnMouseExited(e -> botao.setStyle("-fx-background-color: #3296FF;"));
+        botao.setStyle(estiloBotao);
+        botao.setOnMouseEntered(e -> botao.setStyle(estiloBotaoHover));
+        botao.setOnMouseExited(e -> botao.setStyle(estiloBotao));
         return botao;
     }
 

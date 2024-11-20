@@ -4,12 +4,20 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import main.HistoricoSaida.Compra;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -66,7 +74,18 @@ public class HistoricoEntrada {
             menuAnterior.show();
         });
         
-        painelTopo.getChildren().add(botaoVoltar);
+        Button botaoGerarCSV = new Button();
+        ImageView iconeCSV = new ImageView(new Image("file:C:/Users/carlo/eclipse-workspace/LojaErvas/src/main/csv.png"));
+        iconeCSV.setFitWidth(20);
+        iconeCSV.setFitHeight(27);
+        botaoGerarCSV.setGraphic(iconeCSV);
+        botaoGerarCSV.setStyle(estiloBotao);
+        botaoGerarCSV.setOnMouseEntered(e -> botaoGerarCSV.setStyle(estiloBotaoHover));
+        botaoGerarCSV.setOnMouseExited(e -> botaoGerarCSV.setStyle(estiloBotao));
+        botaoGerarCSV.setOnAction(e -> gerarCSV());
+        
+        
+        painelTopo.getChildren().addAll(botaoVoltar, botaoGerarCSV);
         root.setTop(painelTopo);
 
         carregarHistoricoDoBanco();
@@ -134,6 +153,31 @@ public class HistoricoEntrada {
             ConexaoBancoDados.desconectar(conexao);
         }
     }
+    
+    private void gerarCSV() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salvar CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Arquivo CSV", "*.csv"));
+        File arquivo = fileChooser.showSaveDialog(null);
+
+        if (arquivo != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+                writer.write("ID Produto,Nome Produto,Quantidade,Data e Hora\n");
+                for (Entrada compra : tabelaHistorico.getItems()) {
+                    writer.write(compra.toCSV());
+                    writer.newLine();
+                }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "CSV gerado com sucesso!", ButtonType.OK);
+                alert.showAndWait();
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar CSV: " + e.getMessage(), ButtonType.OK);
+                alert.showAndWait();
+            }
+        }
+    }
+    
+    
+    
 
     // Classe interna para representar uma entrada
     public static class Entrada {
@@ -149,7 +193,11 @@ public class HistoricoEntrada {
             this.dataHora = dataHora;
         }
 
-        public String getIdProduto() { return idProduto; }
+        public String toCSV() {
+        	return String.format("%s,%s,%d,%s", idProduto, nomeProduto, quantidade, dataHora);
+		}
+
+		public String getIdProduto() { return idProduto; }
         public String getNomeProduto() { return nomeProduto; }
         public int getQuantidade() { return quantidade; }
         public String getDataHora() { return dataHora; }
