@@ -29,8 +29,7 @@ public class RemoverEstoque extends Application {
     Font fontePadrao = Font.font("Consolas", 18);
     String estiloBotao = "-fx-background-color: #3A5A40;";
     String estiloBotaoHover = "-fx-background-color: #587A58;";
-    
-    
+
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Carrinho de Compras");
@@ -48,7 +47,7 @@ public class RemoverEstoque extends Application {
             primaryStage.close();
             menuAnterior.show();
         });
-        
+
         // Campos de entrada
         TextField campoIdProduto = new TextField();
         TextField campoNomeProduto = new TextField();
@@ -58,11 +57,20 @@ public class RemoverEstoque extends Application {
         campoNomeProduto.setEditable(false);
         campoValor.setEditable(false);
 
+        // Foco automático no campo ID ao abrir a tela
+        primaryStage.setOnShown(e -> campoIdProduto.requestFocus());
+
         // Campo de ID para preencher automaticamente nome e valor ao perder o foco
         campoIdProduto.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
                 preencherProdutoPorId(campoIdProduto.getText(), campoNomeProduto);
             }
+        });
+
+        // Mover foco para o próximo campo ao pressionar Enter
+        campoIdProduto.setOnAction(e -> {
+            preencherProdutoPorId(campoIdProduto.getText(), campoNomeProduto);
+            campoQuantidade.requestFocus();
         });
 
         // Layout dos campos de entrada
@@ -116,6 +124,7 @@ public class RemoverEstoque extends Application {
                 campoValor.clear();
                 campoQuantidade.clear();
 
+                campoIdProduto.requestFocus(); // Foco volta ao campo de ID após adicionar
             } catch (NumberFormatException ex) {
                 exibirMensagem("Erro ao calcular o subtotal. Verifique os valores inseridos.", Alert.AlertType.ERROR);
                 ex.printStackTrace();
@@ -126,13 +135,11 @@ public class RemoverEstoque extends Application {
         Button botaoFinalizar = criarBotao("Finalizar Compra");
         botaoFinalizar.setOnAction(e -> {
             for (String[] produto : produtos) {
-            	String idProduto = produto[0];
+                String idProduto = produto[0];
                 int qtdProduto = Integer.parseInt(produto[2]);
-                
-                
-             // Adiciona o produto no histórico de compras
+
+                // Adiciona o produto no histórico de compras
                 HistoricoSaida.adicionarCompra(idProduto, qtdProduto);
-                
             }
             exibirMensagem("Estoque retirado", Alert.AlertType.INFORMATION);
         });
@@ -147,18 +154,14 @@ public class RemoverEstoque extends Application {
         primaryStage.setScene(cena);
         primaryStage.show();
     }
-    
 
-    // Criação de rótulos com estilo padrão
     private Label criarLabel(String texto) {
         Label label = new Label(texto);
         label.setFont(fontePadrao);
         label.setTextFill(Color.DARKGREEN);
         return label;
-        
     }
 
-    // Criação de botões com estilo padrão
     private Button criarBotao(String texto) {
         Button botao = new Button(texto);
         botao.setFont(fontePadrao);
@@ -169,7 +172,6 @@ public class RemoverEstoque extends Application {
         return botao;
     }
 
-    // Método para preencher o nome e o valor do produto com base no ID
     private void preencherProdutoPorId(String idProduto, TextField campoNomeProduto) {
         Connection conexao = ConexaoBancoDados.conectar();
         String sql = "SELECT nome FROM produtos WHERE ID = ?";
@@ -190,7 +192,6 @@ public class RemoverEstoque extends Application {
         }
     }
 
-    // Verifica a quantidade do produto no estoque
     private int verificarQuantidadeEmEstoque(String idProduto) {
         int quantidadeEstoque = 0;
         Connection conexao = ConexaoBancoDados.conectar();
@@ -210,7 +211,6 @@ public class RemoverEstoque extends Application {
         return quantidadeEstoque;
     }
 
-    // Atualiza o estoque após a compra
     private void atualizarEstoque(String idProduto, int qtdProduto) {
         Connection conexao = ConexaoBancoDados.conectar();
         String sql = "UPDATE produtos SET qtd = qtd - ? WHERE ID = ?";
@@ -226,7 +226,6 @@ public class RemoverEstoque extends Application {
         }
     }
 
-    // Exibe uma mensagem em um diálogo
     private void exibirMensagem(String mensagem, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
         alerta.setContentText(mensagem);

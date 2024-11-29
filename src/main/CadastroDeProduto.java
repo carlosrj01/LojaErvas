@@ -1,6 +1,7 @@
 package main;
 
 import javafx.application.Application;
+import javafx.application.Platform; // Import necessário
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,7 +35,7 @@ public class CadastroDeProduto extends Application {
         Font fontePadrao = Font.font("Consolas", 18);
         String estiloBotao = "-fx-background-color: #3A5A40;";
         String estiloBotaoHover = "-fx-background-color: #587A58;";
-        
+
         // Botão "Voltar"
         Button botaoVoltar = new Button("Voltar");
         botaoVoltar.setFont(fontePadrao);
@@ -100,7 +101,6 @@ public class CadastroDeProduto extends Application {
         painelCampos.add(labelQuantidade, 0, 2);
         painelCampos.add(campoQuantidade, 1, 2);
         painelCampos.add(botaoCadastrar, 1, 3);
-        
 
         VBox root = new VBox(10, painelSuperior, painelCampos);
         root.setPadding(new Insets(10));
@@ -109,15 +109,35 @@ public class CadastroDeProduto extends Application {
         Scene scene = new Scene(root, 360, 320);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Garantir que o campo ID receba o foco após a interface ser carregada
+        Platform.runLater(() -> campoID.requestFocus());
+
+        // Listener para detectar a leitura do código de barras no campo ID
+        campoID.setOnAction(e -> {
+            // Após o código ser lido, move o foco para o próximo campo (Nome)
+            if (!campoID.getText().isEmpty()) {
+                campoNome.requestFocus(); // Move o foco para o campo Nome
+            }
+        });
+
+        // Adiciona um listener que ao perder o foco faz validação
+        campoID.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                // Ação quando o campo perde o foco (após leitura)
+                if (campoID.getText().isEmpty()) {
+                    showAlert(Alert.AlertType.WARNING, "Código do Produto está vazio!");
+                }
+            }
+        });
     }
 
     private void cadastrarProduto() {
-        int id;
+        String id = campoID.getText();
         String nome = campoNome.getText();
         int quantidade;
 
         try {
-            id = Integer.parseInt(campoID.getText());
             quantidade = Integer.parseInt(campoQuantidade.getText());
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "ID, preço ou quantidade inválidos.");
@@ -128,7 +148,7 @@ public class CadastroDeProduto extends Application {
         String sql = "INSERT INTO produtos (id, nome, qtd) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setString(1, id);
             stmt.setString(2, nome);
             stmt.setInt(3, quantidade);
             stmt.executeUpdate();

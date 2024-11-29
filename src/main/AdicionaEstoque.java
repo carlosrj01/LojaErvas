@@ -37,13 +37,12 @@ public class AdicionaEstoque extends Application {
 
         BorderPane painelFundo = new BorderPane();
         painelFundo.setStyle("-fx-background-color: ECEBD7;");
-        
+
         // Fonte e Estilos
         Font fontePadrao = Font.font("Consolas", 18);
         String estiloBotao = "-fx-background-color: #3A5A40;";
         String estiloBotaoHover = "-fx-background-color: #587A58;";
-      
-        
+
         // Painel do botão "Voltar" no topo
         HBox painelTopo = new HBox();
         painelTopo.setAlignment(Pos.CENTER_LEFT);
@@ -86,7 +85,10 @@ public class AdicionaEstoque extends Application {
         painelCampos.add(campoQuantidadeAdicionar, 1, 1);
         painelFundo.setCenter(painelCampos);
 
-        // Botão "Adicionar Quantidade" para atualizar o estoque
+        // Foco automático no campo ID ao abrir a tela
+        primaryStage.setOnShown(e -> campoIdProduto.requestFocus());
+
+        // Painel de Botão "Adicionar Quantidade"
         Button botaoAdicionarQuantidade = new Button("Adicionar Quantidade");
         botaoAdicionarQuantidade.setStyle(estiloBotao);
         botaoAdicionarQuantidade.setFont(fontePadrao);
@@ -124,6 +126,10 @@ public class AdicionaEstoque extends Application {
         painelBotoes.setAlignment(Pos.CENTER);
         painelBotoes.setPadding(new Insets(10));
         painelFundo.setBottom(painelBotoes);
+
+        // Configurações de foco ao pressionar Enter
+        campoIdProduto.setOnAction(e -> campoQuantidadeAdicionar.requestFocus());
+        campoQuantidadeAdicionar.setOnAction(e -> botaoAdicionarQuantidade.fire());
 
         Scene scene = new Scene(painelFundo, 500, 300);
         primaryStage.setScene(scene);
@@ -174,9 +180,4 @@ public class AdicionaEstoque extends Application {
         alerta.setContentText(mensagem);
         alerta.showAndWait();
     }
-    
-    
-    
-    
-    
 }
