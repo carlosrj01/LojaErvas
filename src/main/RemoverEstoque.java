@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.sql.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RemoverEstoque extends Application {
@@ -19,6 +18,7 @@ public class RemoverEstoque extends Application {
     private ArrayList<String[]> produtos; // Lista para armazenar os produtos adicionados
     private ListView<String> listaProdutosView; // Lista de exibição dos produtos
     private Stage menuAnterior; // Janela do menu principal
+    private boolean preenchimentoAtivo = true; // Controle para ativar/desativar preenchimento automático
 
     public RemoverEstoque(Stage menuAnterior) {
         this.menuAnterior = menuAnterior;
@@ -51,18 +51,16 @@ public class RemoverEstoque extends Application {
         // Campos de entrada
         TextField campoIdProduto = new TextField();
         TextField campoNomeProduto = new TextField();
-        TextField campoValor = new TextField();
         TextField campoQuantidade = new TextField();
 
         campoNomeProduto.setEditable(false);
-        campoValor.setEditable(false);
 
         // Foco automático no campo ID ao abrir a tela
         primaryStage.setOnShown(e -> campoIdProduto.requestFocus());
 
-        // Campo de ID para preencher automaticamente nome e valor ao perder o foco
+        // Campo de ID para preencher automaticamente nome ao perder o foco
         campoIdProduto.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) {
+            if (!newVal && preenchimentoAtivo) {
                 preencherProdutoPorId(campoIdProduto.getText(), campoNomeProduto);
             }
         });
@@ -113,7 +111,6 @@ public class RemoverEstoque extends Application {
                 }
 
                 atualizarEstoque(idProduto, qtdProduto);
-                DecimalFormat df = new DecimalFormat("#,##0.00");
                 String item = ("ID: " + idProduto + " | Nome: " + nomeProduto + " | Quantidade: " + qtdProduto);
 
                 produtos.add(new String[]{idProduto, nomeProduto, String.valueOf(qtdProduto)});
@@ -121,7 +118,6 @@ public class RemoverEstoque extends Application {
 
                 campoIdProduto.clear();
                 campoNomeProduto.clear();
-                campoValor.clear();
                 campoQuantidade.clear();
 
                 campoIdProduto.requestFocus(); // Foco volta ao campo de ID após adicionar
@@ -134,14 +130,20 @@ public class RemoverEstoque extends Application {
         // Botão "Finalizar Compra"
         Button botaoFinalizar = criarBotao("Finalizar Compra");
         botaoFinalizar.setOnAction(e -> {
-            for (String[] produto : produtos) {
-                String idProduto = produto[0];
-                int qtdProduto = Integer.parseInt(produto[2]);
+            preenchimentoAtivo = false; // Desativar preenchimento automático durante a finalização
 
-                // Adiciona o produto no histórico de compras
-                HistoricoSaida.adicionarCompra(idProduto, qtdProduto);
+            try {
+                for (String[] produto : produtos) {
+                    String idProduto = produto[0];
+                    int qtdProduto = Integer.parseInt(produto[2]);
+
+                    // Adiciona o produto no histórico de compras
+                    HistoricoSaida.adicionarCompra(idProduto, qtdProduto);
+                }
+                exibirMensagem("Estoque retirado", Alert.AlertType.INFORMATION);
+            } finally {
+                preenchimentoAtivo = true; // Reativar preenchimento automático após a finalização
             }
-            exibirMensagem("Estoque retirado", Alert.AlertType.INFORMATION);
         });
 
         // Layout dos botões
@@ -173,6 +175,8 @@ public class RemoverEstoque extends Application {
     }
 
     private void preencherProdutoPorId(String idProduto, TextField campoNomeProduto) {
+        if (idProduto.isEmpty()) return;
+
         Connection conexao = ConexaoBancoDados.conectar();
         String sql = "SELECT nome FROM produtos WHERE ID = ?";
 
